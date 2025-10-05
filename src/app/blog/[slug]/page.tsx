@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { BlogPost } from "@/types";
 import { Clock, Eye, Calendar, Tag } from "lucide-react";
@@ -9,6 +9,7 @@ import Image from "next/image";
 import Header from "@/components/Header";
 import StructuredData from "@/components/StructuredData";
 import { processImageUrl } from "@/lib/image-utils";
+import { hasUserViewedPost, markPostAsViewed } from "@/lib/view-tracking";
 
 // Helper function to deserialize dates from API response
 function deserializeDates(obj: any): any {
@@ -36,7 +37,6 @@ export default function BlogDetailPage() {
   const router = useRouter();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
-  const viewsIncrementedRef = useRef(false);
 
   useEffect(() => {
     const loadPost = async () => {
@@ -48,15 +48,19 @@ export default function BlogDetailPage() {
           const deserializedPost = deserializeDates(foundPost);
           setPost(deserializedPost);
 
-          // Increment view count (only once per session)
-          if (!viewsIncrementedRef.current) {
-            viewsIncrementedRef.current = true;
+          // Increment view count (only once per user using localStorage)
+          if (!hasUserViewedPost(params.slug)) {
+            // User hasn't viewed this post before, increment view count
             try {
               await fetch(`/api/posts/${params.slug}/views`, {
                 method: "POST",
               });
+
+              // Mark this post as viewed by this user
+              markPostAsViewed(params.slug);
             } catch (error) {
-              // Failed to increment views
+              // Failed to increment views, but still mark as viewed to prevent retries
+              markPostAsViewed(params.slug);
             }
           }
         } else {
