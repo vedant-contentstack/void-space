@@ -49,7 +49,10 @@ export default function BlogDetailPage() {
           setPost(deserializedPost);
 
           // Increment view count (only once per user using localStorage)
-          if (!hasUserViewedPost(params.slug)) {
+          if (
+            typeof params.slug === "string" &&
+            !hasUserViewedPost(params.slug)
+          ) {
             // User hasn't viewed this post before, increment view count
             try {
               await fetch(`/api/posts/${params.slug}/views`, {
