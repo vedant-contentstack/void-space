@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { BlogPost } from "@/types";
-import { Clock, Eye, Calendar, Tag } from "lucide-react";
+import { Eye, Calendar, Tag, Share2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import Image from "next/image";
 import Header from "@/components/Header";
@@ -78,6 +78,37 @@ export default function BlogDetailPage() {
 
     loadPost();
   }, [params.slug]);
+
+  const handleShare = async () => {
+    if (!post) return;
+
+    const shareData = {
+      title: post.title,
+      text: post.excerpt,
+      url: window.location.href,
+    };
+
+    try {
+      // Use Web Share API if available (mobile devices)
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback: Copy to clipboard
+        await navigator.clipboard.writeText(window.location.href);
+        // You could show a toast notification here
+        alert("Link copied to clipboard!");
+      }
+    } catch (error) {
+      // Fallback: Copy to clipboard
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        alert("Link copied to clipboard!");
+      } catch (clipboardError) {
+        // Final fallback: Show URL in alert
+        alert(`Share this post: ${window.location.href}`);
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -215,7 +246,7 @@ export default function BlogDetailPage() {
           onBackClick={() => router.back()}
         />
 
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-36 pb-6 sm:pb-8 relative z-10">
+        <div className="max-w-3xl mx-auto px-3 sm:px-4 pt-36 pb-6 sm:pb-8 relative z-10">
           {post.bannerImage && (
             <div className="relative w-full h-64 mb-8 rounded-lg overflow-hidden shadow-lg border border-void-border">
               <Image
@@ -234,10 +265,11 @@ export default function BlogDetailPage() {
             {post.title}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-void-muted text-sm mb-8">
-            <div className="flex items-center gap-1">
-              <Calendar size={14} />
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mb-8">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-void-dark/30 rounded-lg border border-void-border/50">
+              <Calendar size={14} className="text-void-accent" />
               <time
+                className="text-void-muted text-sm font-medium"
                 dateTime={
                   post.publishedAt?.toISOString() ||
                   post.createdAt.toISOString()
@@ -265,20 +297,34 @@ export default function BlogDetailPage() {
                 </span>
               </time>
             </div>
-            <div className="flex items-center gap-1">
-              <Clock size={14} />
-              <span>{post.readingTime} min journey</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Eye size={14} />
-              <span className="hidden sm:inline">
-                {post.views || 0} souls visited
+
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-void-dark/30 rounded-lg border border-void-border/50">
+              <Eye size={14} className="text-green-400" />
+              <span className="text-void-muted text-sm font-medium">
+                <span className="hidden sm:inline">
+                  {post.views || 0} souls visited
+                </span>
+                <span className="sm:hidden">{post.views || 0} souls</span>
               </span>
-              <span className="sm:hidden">{post.views || 0} souls</span>
             </div>
-            <div className="flex items-center gap-2">
-              <span>by {post.author.displayName}</span>
+
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-void-dark/30 rounded-lg border border-void-border/50">
+              <div className="w-5 h-5 rounded-full bg-void-accent flex items-center justify-center text-void-black font-bold text-xs">
+                {post.author.displayName.charAt(0).toUpperCase()}
+              </div>
+              <span className="text-void-accent text-sm font-medium">
+                {post.author.displayName}
+              </span>
             </div>
+
+            <button
+              onClick={() => handleShare()}
+              className="flex items-center gap-2 px-3 py-1.5 bg-void-dark/30 rounded-lg border border-void-border/50 hover:border-void-accent/30 hover:bg-void-dark/50 transition-all duration-200 text-purple-400"
+              title="Share this post"
+            >
+              <Share2 size={14} />
+              <span className="text-void-muted text-sm font-medium">Share</span>
+            </button>
           </div>
 
           <div className="prose prose-invert prose-lg max-w-none text-void-text leading-relaxed mb-12">
