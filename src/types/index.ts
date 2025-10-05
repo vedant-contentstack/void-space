@@ -58,3 +58,11 @@ export interface BlogTag {
   slug: string;
   postCount: number;
 }
+
+export interface ComingSoonFeature {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  isLocked: boolean;
+}

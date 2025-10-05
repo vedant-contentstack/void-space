@@ -2,13 +2,14 @@ import { Metadata } from "next";
 import { getBlogPostBySlug } from "@/lib/supabase-service";
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://voidd.space";
-    const post = await getBlogPostBySlug(params.slug);
+    const resolvedParams = await params;
+    const post = await getBlogPostBySlug(resolvedParams.slug);
 
     if (!post) {
       return {
@@ -41,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       openGraph: {
         type: "article",
         locale: "en_US",
-        url: `${baseUrl}/blog/${post.slug}`,
+        url: `${baseUrl}/blog/${resolvedParams.slug}`,
         siteName: "Void Space",
         title: post.title,
         description: post.excerpt,
@@ -75,7 +76,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         creator: "@vedantkarle",
       },
       alternates: {
-        canonical: `${baseUrl}/blog/${post.slug}`,
+        canonical: `${baseUrl}/blog/${resolvedParams.slug}`,
       },
     };
   } catch (error) {

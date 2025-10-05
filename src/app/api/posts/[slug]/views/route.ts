@@ -3,10 +3,11 @@ import { incrementPostViews } from "@/lib/supabase-service";
 
 export async function POST(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const result = await incrementPostViews(params.slug);
+    const resolvedParams = await params;
+    const result = await incrementPostViews(resolvedParams.slug);
     return NextResponse.json(result);
   } catch (error) {
     console.error("Error incrementing views:", error);

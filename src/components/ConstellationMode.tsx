@@ -89,7 +89,7 @@ export default function ConstellationMode({
         y,
         size: Math.max(
           8,
-          Math.min(20, post.resonates + post.comments.length + 5)
+          Math.min(20, (post.views || 0) / 10 + post.tags.length + 5)
         ),
         category: post.category || "default",
         color:

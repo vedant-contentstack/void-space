@@ -21,10 +21,11 @@ function serializeDates(obj: any): any {
 
 export async function GET(
   request: Request,
-  { params }: { params: { tag: string } }
+  { params }: { params: Promise<{ tag: string }> }
 ) {
   try {
-    const tag = decodeURIComponent(params.tag);
+    const resolvedParams = await params;
+    const tag = decodeURIComponent(resolvedParams.tag);
     const allPosts = await getAllBlogPosts();
 
     // Filter posts by tag

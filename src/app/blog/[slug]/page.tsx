@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { BlogPost } from "@/types";
-import { ArrowLeft, Clock, Eye, Calendar, Tag } from "lucide-react";
+import { Clock, Eye, Calendar, Tag } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import Image from "next/image";
 import Header from "@/components/Header";
@@ -204,18 +204,11 @@ export default function BlogDetailPage() {
 
         <Header
           onSettingsClick={() => {}}
-          onConstellationClick={() => router.push("/blog")} // Go back to blog for constellation
+          showBackButton={true}
+          onBackClick={() => router.back()}
         />
 
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 relative z-10">
-          <button
-            onClick={() => router.back()}
-            className="inline-flex items-center gap-2 text-void-muted hover:text-void-text transition-colors mb-8"
-          >
-            <ArrowLeft size={16} />
-            <span className="font-mono text-sm">back to void</span>
-          </button>
-
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-36 pb-6 sm:pb-8 relative z-10">
           {post.bannerImage && (
             <div className="relative w-full h-64 mb-8 rounded-lg overflow-hidden shadow-lg border border-void-border">
               <Image

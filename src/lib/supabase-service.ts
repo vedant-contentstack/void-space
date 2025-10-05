@@ -57,37 +57,41 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
     throw error;
   }
 
-  return data.map((post: any) => ({
-    id: post.id,
-    slug: post.slug,
-    title: post.title,
-    excerpt: post.excerpt,
-    content: post.content,
-    bannerImage: post.banner_image,
-    authorId: post.author.id,
-    author: {
-      id: post.author.id,
-      username: post.author.username,
-      displayName: post.author.display_name,
-      bio: post.author.bio || "",
-      createdAt: new Date(post.author.created_at),
-      preferences: {
-        typography: "mono",
-        enableSeasonalThemes: true,
-        enableSilenceAppreciation: true,
-        enableBreathingSpace: true,
+  return data.map((post: any) => {
+    const author = Array.isArray(post.author) ? post.author[0] : post.author;
+
+    return {
+      id: post.id,
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt,
+      content: post.content,
+      bannerImage: post.banner_image,
+      authorId: author.id,
+      author: {
+        id: author.id,
+        username: author.username,
+        displayName: author.display_name,
+        bio: author.bio || "",
+        createdAt: new Date(author.created_at),
+        preferences: {
+          typography: "mono",
+          enableSeasonalThemes: true,
+          enableSilenceAppreciation: true,
+          enableBreathingSpace: true,
+        },
       },
-    },
-    createdAt: new Date(post.created_at),
-    updatedAt: post.updated_at ? new Date(post.updated_at) : undefined,
-    publishedAt: post.published_at ? new Date(post.published_at) : undefined,
-    readingTime: post.reading_time,
-    category: post.category,
-    tags: post.tags || [],
-    isPublished: post.is_published,
-    isDraft: post.is_draft,
-    views: post.views || 0,
-  }));
+      createdAt: new Date(post.created_at),
+      updatedAt: post.updated_at ? new Date(post.updated_at) : undefined,
+      publishedAt: post.published_at ? new Date(post.published_at) : undefined,
+      readingTime: post.reading_time,
+      category: post.category,
+      tags: post.tags || [],
+      isPublished: post.is_published,
+      isDraft: post.is_draft,
+      views: post.views || 0,
+    };
+  });
 }
 
 export async function getBlogPostBySlug(
@@ -118,6 +122,8 @@ export async function getBlogPostBySlug(
 
   if (!data) return null;
 
+  const author = Array.isArray(data.author) ? data.author[0] : data.author;
+
   return {
     id: data.id,
     slug: data.slug,
@@ -125,13 +131,13 @@ export async function getBlogPostBySlug(
     excerpt: data.excerpt,
     content: data.content,
     bannerImage: data.banner_image,
-    authorId: data.author.id,
+    authorId: author.id,
     author: {
-      id: data.author.id,
-      username: data.author.username,
-      displayName: data.author.display_name,
-      bio: data.author.bio || "",
-      createdAt: new Date(data.author.created_at),
+      id: author.id,
+      username: author.username,
+      displayName: author.display_name,
+      bio: author.bio || "",
+      createdAt: new Date(author.created_at),
       preferences: {
         typography: "mono",
         enableSeasonalThemes: true,

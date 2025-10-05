@@ -1,18 +1,24 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
+import { Sparkles, BookOpen, ArrowLeft } from "lucide-react";
 
 interface HeaderProps {
   onSettingsClick?: () => void;
   onConstellationClick?: () => void;
+  showBlogLink?: boolean;
+  showBackButton?: boolean;
+  onBackClick?: () => void;
 }
 
 export default function Header({
   onSettingsClick,
   onConstellationClick,
+  showBlogLink = false,
+  showBackButton = false,
+  onBackClick,
 }: HeaderProps) {
   return (
-    <header className="sticky top-0 bg-void-black/95 backdrop-blur-md border-b border-void-border z-50">
+    <header className="fixed top-0 left-0 right-0 bg-void-black/95 backdrop-blur-md border-b border-void-border z-50">
       <div className="max-w-4xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -36,7 +42,31 @@ export default function Header({
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            {/* Back Button */}
+            {showBackButton && onBackClick && (
+              <button
+                onClick={onBackClick}
+                className="flex items-center gap-2 px-3 py-1.5 text-void-muted hover:text-void-text border border-void-border hover:border-void-accent/30 rounded-lg font-medium transition-all duration-200 text-sm"
+                title="Go back"
+              >
+                <ArrowLeft size={14} />
+                <span className="hidden sm:inline">back</span>
+              </button>
+            )}
+
+            {/* Blog Link Button */}
+            {showBlogLink && (
+              <button
+                onClick={() => (window.location.href = "/blog")}
+                className="flex items-center gap-2 px-3 py-1.5 bg-void-accent/10 text-void-accent border border-void-accent/30 rounded-lg font-medium hover:bg-void-accent/20 transition-all duration-200 text-sm"
+                title="Read thoughts from the void"
+              >
+                <BookOpen size={14} />
+                <span className="hidden sm:inline">thoughts</span>
+              </button>
+            )}
+
             {/* Constellation Mode Button */}
             {onConstellationClick && (
               <button

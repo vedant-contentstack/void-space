@@ -84,12 +84,9 @@ export default function LandingPage() {
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-void-accent/3 to-transparent rounded-full blur-3xl"></div>
       </div>
 
-      <Header
-        onSettingsClick={() => console.log("Settings clicked")}
-        onConstellationClick={() => router.push("/")}
-      />
+      <Header onSettingsClick={() => console.log("Settings clicked")} />
 
-      <div className="relative z-10">
+      <div className="relative z-10 pt-20">
         {/* Hero Section */}
         <section className="min-h-[80vh] flex items-center justify-center px-6">
           <div className="max-w-4xl mx-auto text-center">
@@ -241,8 +238,8 @@ export default function LandingPage() {
 
             <div className="text-void-muted leading-relaxed space-y-6 max-w-3xl mx-auto">
               <p>
-                The void space is more than a blog—it's a digital sanctuary for
-                contemplation. Here, we explore the intersections of
+                The void space is more than a blog—it&apos;s a digital sanctuary
+                for contemplation. Here, we explore the intersections of
                 consciousness, technology, and the human experience.
               </p>
 
@@ -253,7 +250,8 @@ export default function LandingPage() {
               </p>
 
               <p className="text-void-muted-dark text-sm italic">
-                "In the space between thoughts, infinite possibilities emerge."
+                &ldquo;In the space between thoughts, infinite possibilities
+                emerge.&rdquo;
               </p>
             </div>
           </div>

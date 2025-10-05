@@ -123,12 +123,9 @@ export default function NewsletterAdminPage() {
 
   return (
     <main className="min-h-screen bg-void-black">
-      <Header
-        onSettingsClick={() => {}}
-        onConstellationClick={() => (window.location.href = "/blog")}
-      />
+      <Header onSettingsClick={() => {}} />
 
-      <div className="max-w-4xl mx-auto px-6 py-16">
+      <div className="max-w-4xl mx-auto px-6 py-16 pt-24">
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-void-accent/20 to-void-accent-light/20 flex items-center justify-center">

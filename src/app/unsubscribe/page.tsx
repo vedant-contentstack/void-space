@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Mail, CheckCircle, AlertCircle } from "lucide-react";
 import Header from "@/components/Header";
 
-export default function UnsubscribePage() {
+function UnsubscribeForm() {
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<
@@ -61,12 +61,9 @@ export default function UnsubscribePage() {
 
   return (
     <main className="min-h-screen bg-void-black">
-      <Header
-        onSettingsClick={() => {}}
-        onConstellationClick={() => (window.location.href = "/blog")}
-      />
+      <Header onSettingsClick={() => {}} />
 
-      <div className="max-w-2xl mx-auto px-6 py-16">
+      <div className="max-w-2xl mx-auto px-6 py-16 pt-24">
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
             <div className="w-16 h-16 rounded-2xl bg-void-dark border border-void-border flex items-center justify-center">
@@ -79,7 +76,7 @@ export default function UnsubscribePage() {
           </h1>
 
           <p className="text-void-muted leading-relaxed">
-            We're sorry to see you go. Enter your email address below to
+            We&apos;re sorry to see you go. Enter your email address below to
             unsubscribe from the void space newsletter.
           </p>
         </div>
@@ -165,5 +162,22 @@ export default function UnsubscribePage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function UnsubscribePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-void-black flex items-center justify-center">
+          <div className="text-center animate-fade-in">
+            <div className="w-8 h-8 border-2 border-void-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-void-muted">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <UnsubscribeForm />
+    </Suspense>
   );
 }

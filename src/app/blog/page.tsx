@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import BlogFeed from "@/components/BlogFeed";
 import Header from "@/components/Header";
 import ConstellationMode from "@/components/ConstellationMode";
 import TagFilter from "@/components/TagFilter";
 import StructuredData from "@/components/StructuredData";
-import Newsletter from "@/components/Newsletter";
 import { BlogPost } from "@/types";
 import { Sparkles } from "lucide-react";
 
@@ -32,7 +31,7 @@ function deserializeDates(obj: any): any {
   return obj;
 }
 
-export default function Home() {
+function BlogContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const initializedFromURL = useRef(false);
@@ -252,30 +251,25 @@ export default function Home() {
           </svg>
         </div>
 
-        <Header
-          onSettingsClick={() => {}}
-          onConstellationClick={() => setShowConstellationMode(true)}
-        />
+        {showConstellationMode ? (
+          <ConstellationMode
+            posts={filteredPosts}
+            onClose={() => setShowConstellationMode(false)}
+            onPostSelect={handleConstellationPostClick}
+          />
+        ) : (
+          <>
+            <Header
+              onSettingsClick={() => {}}
+              onConstellationClick={() => setShowConstellationMode(true)}
+            />
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 relative z-10">
-          {showConstellationMode ? (
-            <div className="relative">
-              <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
-                <button
-                  onClick={() => setShowConstellationMode(false)}
-                  className="px-4 py-2 bg-void-dark border border-void-border rounded-lg text-void-muted hover:text-void-text hover:border-void-accent transition-all duration-200 text-sm"
-                >
-                  back to feed
-                </button>
-              </div>
-              <ConstellationMode
-                posts={filteredPosts}
-                onClose={() => setShowConstellationMode(false)}
-                onPostSelect={handleConstellationPostClick}
-              />
-            </div>
-          ) : (
-            <>
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-32 pb-6 sm:pb-8 relative z-10">
+              <h1 className="text-3xl md:text-4xl font-light text-void-text mb-8 text-center">
+                Thoughts from the{" "}
+                <span className="text-void-accent font-medium">Void</span>
+              </h1>
+
               <TagFilter
                 posts={blogPosts}
                 selectedTags={selectedTags}
@@ -288,15 +282,27 @@ export default function Home() {
                 onReadPost={handleReadPost}
                 onTagClick={handleTagSelect}
               />
-
-              {/* Newsletter Section */}
-              <div className="mt-16">
-                <Newsletter variant="inline" />
-              </div>
-            </>
-          )}
-        </div>
+            </div>
+          </>
+        )}
       </main>
     </>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-void-black flex items-center justify-center">
+          <div className="text-center animate-fade-in">
+            <div className="w-8 h-8 border-2 border-void-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-void-muted">Loading from the void...</p>
+          </div>
+        </div>
+      }
+    >
+      <BlogContent />
+    </Suspense>
   );
 }

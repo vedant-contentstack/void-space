@@ -21,11 +21,12 @@ function serializeDates(obj: any): any {
 
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     // Load post from Supabase
-    const post = await getBlogPostBySlug(params.slug);
+    const post = await getBlogPostBySlug(resolvedParams.slug);
 
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });

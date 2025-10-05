@@ -60,7 +60,7 @@ export default function BlogFeed({
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-void-dark/50 rounded-full border border-void-border">
               <div className="w-2 h-2 rounded-full bg-void-muted animate-pulse"></div>
               <p className="text-void-muted text-sm font-medium">
-                you've reached the beginning of time
+                you&apos;ve reached the beginning of time
               </p>
             </div>
           </div>
