@@ -92,6 +92,10 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <head>
         <StructuredData type="website" />
+        <meta
+          name="google-site-verification"
+          content="ywG3RmuPUwxbykDYfGPTIa4mPj6GYx69os1RNGyrcHQ"
+        />
       </head>
       <body className="bg-void-black text-void-text antialiased">
         <div className="min-h-screen">{children}</div>
