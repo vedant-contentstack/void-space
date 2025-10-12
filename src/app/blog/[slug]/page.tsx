@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { BlogPost } from "@/types";
-import { Eye, Share2, Heart } from "lucide-react";
+import { Eye, Share2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import Image from "next/image";
 import Header from "@/components/Header";
@@ -270,19 +270,13 @@ export default function BlogDetailPage() {
           </h1>
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mb-8">
-            {/* Resonates Count Display */}
-            {post.resonates && post.resonates > 0 && (
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-void-dark/30 rounded-lg border border-void-border/50">
-                <Heart size={14} className="text-red-400 fill-current" />
-                <span className="text-void-muted text-sm font-medium">
-                  <span className="hidden sm:inline">
-                    {post.resonates}{" "}
-                    {post.resonates === 1 ? "soul resonates" : "souls resonate"}
-                  </span>
-                  <span className="sm:hidden">{post.resonates}</span>
-                </span>
-              </div>
-            )}
+            {/* Resonates Button */}
+            <ResonatesButton
+              postSlug={post.slug}
+              initialResonates={post.resonates || 0}
+              size="md"
+              showCount={true}
+            />
 
             <div className="flex items-center gap-2 px-3 py-1.5 bg-void-dark/30 rounded-lg border border-void-border/50">
               <Eye size={14} className="text-green-400" />
@@ -452,16 +446,6 @@ export default function BlogDetailPage() {
             >
               {post.content}
             </ReactMarkdown>
-          </div>
-
-          {/* Resonates Button */}
-          <div className="flex justify-center mb-16">
-            <ResonatesButton
-              postSlug={post.slug}
-              initialResonates={post.resonates || 0}
-              size="lg"
-              showCount={true}
-            />
           </div>
 
           {/* Comments Section */}
