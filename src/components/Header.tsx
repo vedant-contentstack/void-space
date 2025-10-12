@@ -1,11 +1,12 @@
 "use client";
 
-import { Sparkles, BookOpen, ArrowLeft } from "lucide-react";
+import { Sparkles, BookOpen, ArrowLeft, Mail } from "lucide-react";
 
 interface HeaderProps {
   onSettingsClick?: () => void;
   onConstellationClick?: () => void;
   showBlogLink?: boolean;
+  showSubscribeLink?: boolean;
   showBackButton?: boolean;
   onBackClick?: () => void;
 }
@@ -14,6 +15,7 @@ export default function Header({
   onSettingsClick,
   onConstellationClick,
   showBlogLink = false,
+  showSubscribeLink = false,
   showBackButton = false,
   onBackClick,
 }: HeaderProps) {
@@ -63,7 +65,26 @@ export default function Header({
                 title="Read thoughts from the void"
               >
                 <BookOpen size={14} />
-                <span className="hidden sm:inline">thoughts</span>
+                <span className="hidden sm:inline">blog</span>
+              </button>
+            )}
+
+            {/* Subscribe Link Button */}
+            {showSubscribeLink && (
+              <button
+                onClick={() => {
+                  const newsletterSection = document.querySelector(
+                    "#newsletter-section"
+                  );
+                  if (newsletterSection) {
+                    newsletterSection.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                className="flex items-center gap-2 px-3 py-1.5 bg-void-accent/10 text-void-accent border border-void-accent/30 rounded-lg font-medium hover:bg-void-accent/20 transition-all duration-200 text-sm"
+                title="Subscribe to the void"
+              >
+                <Mail size={14} />
+                <span className="hidden sm:inline">subscribe</span>
               </button>
             )}
 

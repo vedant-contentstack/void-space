@@ -32,7 +32,11 @@ export default function LandingPage() {
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-void-accent/3 to-transparent rounded-full blur-3xl"></div>
       </div>
 
-      <Header onSettingsClick={() => {}} showBlogLink={true} />
+      <Header
+        onSettingsClick={() => {}}
+        showBlogLink={true}
+        showSubscribeLink={true}
+      />
 
       <div className="relative z-10 pt-20">
         {/* Hero Section */}
@@ -82,7 +86,7 @@ export default function LandingPage() {
         </section>
 
         {/* Newsletter Section */}
-        <section className="py-20 px-6">
+        <section id="newsletter-section" className="py-20 px-6">
           <div className="max-w-4xl mx-auto">
             <Newsletter />
           </div>
