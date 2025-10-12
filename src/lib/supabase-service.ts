@@ -64,7 +64,8 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
     `
     )
     .eq("is_published", true)
-    .order("published_at", { ascending: false });
+    .order("published_at", { ascending: false, nullsFirst: false })
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Error fetching all blog posts:", error);
