@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { BlogPost } from "@/types";
-import { Eye, Calendar, Tag, Share2 } from "lucide-react";
+import { Eye, Share2, Heart } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import Image from "next/image";
 import Header from "@/components/Header";
 import StructuredData from "@/components/StructuredData";
+import ResonatesButton from "@/components/ResonatesButton";
+import CommentForm from "@/components/CommentForm";
+import CommentsList from "@/components/CommentsList";
 import { processImageUrl } from "@/lib/image-utils";
 import { hasUserViewedPost, markPostAsViewed } from "@/lib/view-tracking";
 
@@ -37,6 +40,7 @@ export default function BlogDetailPage() {
   const router = useRouter();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
+  const [commentsRefreshTrigger, setCommentsRefreshTrigger] = useState(0);
 
   useEffect(() => {
     const loadPost = async () => {
@@ -243,7 +247,7 @@ export default function BlogDetailPage() {
         <Header
           onSettingsClick={() => {}}
           showBackButton={true}
-          onBackClick={() => router.back()}
+          onBackClick={() => router.push("/blog")}
         />
 
         <div className="max-w-3xl mx-auto px-3 sm:px-4 pt-36 pb-6 sm:pb-8 relative z-10">
@@ -266,37 +270,19 @@ export default function BlogDetailPage() {
           </h1>
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mb-8">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-void-dark/30 rounded-lg border border-void-border/50">
-              <Calendar size={14} className="text-void-accent" />
-              <time
-                className="text-void-muted text-sm font-medium"
-                dateTime={
-                  post.publishedAt?.toISOString() ||
-                  post.createdAt.toISOString()
-                }
-              >
-                <span className="hidden sm:inline">
-                  {(post.publishedAt || post.createdAt).toLocaleDateString(
-                    "en-US",
-                    {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    }
-                  )}
+            {/* Resonates Count Display */}
+            {post.resonates && post.resonates > 0 && (
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-void-dark/30 rounded-lg border border-void-border/50">
+                <Heart size={14} className="text-red-400 fill-current" />
+                <span className="text-void-muted text-sm font-medium">
+                  <span className="hidden sm:inline">
+                    {post.resonates}{" "}
+                    {post.resonates === 1 ? "soul resonates" : "souls resonate"}
+                  </span>
+                  <span className="sm:hidden">{post.resonates}</span>
                 </span>
-                <span className="sm:hidden">
-                  {(post.publishedAt || post.createdAt).toLocaleDateString(
-                    "en-US",
-                    {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    }
-                  )}
-                </span>
-              </time>
-            </div>
+              </div>
+            )}
 
             <div className="flex items-center gap-2 px-3 py-1.5 bg-void-dark/30 rounded-lg border border-void-border/50">
               <Eye size={14} className="text-green-400" />
@@ -468,24 +454,29 @@ export default function BlogDetailPage() {
             </ReactMarkdown>
           </div>
 
-          {post.tags && post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-12">
-              {post.tags.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => {
-                    // Navigate back to blog with tag filter
-                    router.push(`/blog?tag=${encodeURIComponent(tag)}`);
-                  }}
-                  className="px-3 py-1 bg-void-dark border border-void-border rounded-full text-void-muted text-xs font-mono hover:bg-void-accent/20 hover:text-void-accent hover:border-void-accent/30 transition-all duration-200 cursor-pointer"
-                  title={`View all posts tagged with ${tag}`}
-                >
-                  <Tag size={12} className="inline-block mr-1" />
-                  {tag}
-                </button>
-              ))}
-            </div>
-          )}
+          {/* Resonates Button */}
+          <div className="flex justify-center mb-16">
+            <ResonatesButton
+              postSlug={post.slug}
+              initialResonates={post.resonates || 0}
+              size="lg"
+              showCount={true}
+            />
+          </div>
+
+          {/* Comments Section */}
+          <div className="mt-16 space-y-8">
+            <CommentsList
+              postSlug={post.slug}
+              refreshTrigger={commentsRefreshTrigger}
+            />
+            <CommentForm
+              postSlug={post.slug}
+              onCommentSubmitted={() =>
+                setCommentsRefreshTrigger((prev) => prev + 1)
+              }
+            />
+          </div>
         </div>
       </main>
     </>

@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import ConstellationMode from "@/components/ConstellationMode";
 import TagFilter from "@/components/TagFilter";
 import StructuredData from "@/components/StructuredData";
+import BlackHoleLoader from "@/components/BlackHoleLoader";
 import { BlogPost } from "@/types";
 import { Sparkles } from "lucide-react";
 
@@ -39,14 +40,11 @@ function BlogContent() {
   const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadingStep, setLoadingStep] = useState("Initializing...");
   const [showConstellationMode, setShowConstellationMode] = useState(false);
 
   // Load posts on mount
   useEffect(() => {
     const loadPosts = async () => {
-      setLoadingStep("Loading posts...");
-
       try {
         const response = await fetch("/api/posts");
         if (response.ok) {
@@ -61,7 +59,6 @@ function BlogContent() {
         setBlogPosts([]);
         setFilteredPosts([]);
       } finally {
-        setLoadingStep("Complete");
         setLoading(false);
       }
     };
@@ -142,15 +139,7 @@ function BlogContent() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-void-black">
-        <div className="text-center animate-fade-in">
-          <div className="w-8 h-8 border-2 border-void-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-void-muted">Loading thoughts from the void...</p>
-          <p className="text-void-muted-dark text-xs mt-2">{loadingStep}</p>
-        </div>
-      </div>
-    );
+    return <BlackHoleLoader message="Loading thoughts from the void..." />;
   }
 
   return (
@@ -292,16 +281,7 @@ function BlogContent() {
 
 export default function Home() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-void-black flex items-center justify-center">
-          <div className="text-center animate-fade-in">
-            <div className="w-8 h-8 border-2 border-void-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-void-muted">Loading from the void...</p>
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={<BlackHoleLoader message="Entering the void..." />}>
       <BlogContent />
     </Suspense>
   );

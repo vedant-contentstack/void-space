@@ -33,6 +33,7 @@ export interface BlogPost {
   isDraft: boolean;
   slug: string;
   views?: number;
+  resonates?: number;
 }
 
 export interface BlogStats {
@@ -65,4 +66,46 @@ export interface ComingSoonFeature {
   description: string;
   icon: string;
   isLocked: boolean;
+}
+
+export interface Comment {
+  id: string;
+  postId: string;
+  guestName: string;
+  content: string;
+  createdAt: Date;
+  isApproved: boolean;
+  isRejected: boolean;
+  moderatedAt?: Date;
+  ipAddress?: string;
+}
+
+export interface PendingComment {
+  id: string;
+  postTitle: string;
+  postSlug: string;
+  guestName: string;
+  content: string;
+  createdAt: Date;
+  ipAddress?: string;
+}
+
+export interface ApprovedComment {
+  id: string;
+  guestName: string;
+  content: string;
+  createdAt: Date;
+}
+
+export interface AllComment {
+  id: string;
+  postTitle: string;
+  postSlug: string;
+  guestName: string;
+  content: string;
+  createdAt: Date;
+  isApproved: boolean;
+  isRejected: boolean;
+  moderatedAt?: Date;
+  ipAddress?: string;
 }

@@ -1,5 +1,5 @@
 import { supabase } from "./supabase";
-import { BlogPost } from "@/types";
+import { BlogPost, ApprovedComment, PendingComment, AllComment } from "@/types";
 
 // Helper function to get post UUID from slug
 export async function getPostUUIDFromSlug(
@@ -33,6 +33,20 @@ export async function incrementPostViews(slug: string) {
   return { views: data };
 }
 
+export async function incrementPostResonates(slug: string) {
+  if (!supabase) {
+    throw new Error("Supabase not configured");
+  }
+
+  // Use PostgreSQL function for atomic increment
+  const { data, error } = await supabase.rpc("increment_post_resonates", {
+    post_slug: slug,
+  });
+
+  if (error) throw error;
+  return { resonates: data };
+}
+
 // New functions to fetch blog posts directly from Supabase
 export async function getAllBlogPosts(): Promise<BlogPost[]> {
   if (!supabase) {
@@ -45,7 +59,7 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
       `
       id, slug, title, excerpt, content, banner_image, category, tags,
       published_at, reading_time, is_published, is_draft, created_at, updated_at,
-      views,
+      views, resonates,
       author:users(id, username, display_name, bio, created_at)
     `
     )
@@ -90,6 +104,7 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
       isPublished: post.is_published,
       isDraft: post.is_draft,
       views: post.views || 0,
+      resonates: post.resonates || 0,
     };
   });
 }
@@ -107,7 +122,7 @@ export async function getBlogPostBySlug(
       `
       id, slug, title, excerpt, content, banner_image, category, tags,
       published_at, reading_time, is_published, is_draft, created_at, updated_at,
-      views,
+      views, resonates,
       author:users(id, username, display_name, bio, created_at)
     `
     )
@@ -154,6 +169,7 @@ export async function getBlogPostBySlug(
     isPublished: data.is_published,
     isDraft: data.is_draft,
     views: data.views || 0,
+    resonates: data.resonates || 0,
   };
 }
 
@@ -252,4 +268,134 @@ export async function getNewsletterStats() {
 
   if (error) throw error;
   return data[0]; // Function returns a single row
+}
+
+// Comment Management Functions
+export async function submitComment(
+  postSlug: string,
+  guestName: string,
+  content: string,
+  ipAddress?: string
+) {
+  if (!supabase) {
+    throw new Error("Supabase not configured");
+  }
+
+  const { data, error } = await supabase.rpc("submit_comment", {
+    post_slug: postSlug,
+    commenter_name: guestName.trim(),
+    comment_content: content.trim(),
+    commenter_ip: ipAddress || null,
+  });
+
+  if (error) throw error;
+  return { commentId: data };
+}
+
+export async function getApprovedCommentsByPostSlug(
+  postSlug: string
+): Promise<ApprovedComment[]> {
+  if (!supabase) {
+    throw new Error("Supabase not configured");
+  }
+
+  const { data, error } = await supabase.rpc(
+    "get_approved_comments_by_post_slug",
+    {
+      post_slug: postSlug,
+    }
+  );
+
+  if (error) throw error;
+
+  return data.map((comment: any) => ({
+    id: comment.id,
+    guestName: comment.guest_name,
+    content: comment.content,
+    createdAt: new Date(comment.created_at),
+  }));
+}
+
+export async function getPendingComments(): Promise<PendingComment[]> {
+  if (!supabase) {
+    throw new Error("Supabase not configured");
+  }
+
+  const { data, error } = await supabase.rpc("get_pending_comments");
+
+  if (error) throw error;
+
+  return data.map((comment: any) => ({
+    id: comment.id,
+    postTitle: comment.post_title,
+    postSlug: comment.post_slug,
+    guestName: comment.guest_name,
+    content: comment.content,
+    createdAt: new Date(comment.created_at),
+    ipAddress: comment.ip_address,
+  }));
+}
+
+export async function getAllComments(): Promise<AllComment[]> {
+  if (!supabase) {
+    throw new Error("Supabase not configured");
+  }
+
+  const { data, error } = await supabase.rpc("get_all_comments");
+
+  if (error) throw error;
+
+  return data.map((comment: any) => ({
+    id: comment.id,
+    postTitle: comment.post_title,
+    postSlug: comment.post_slug,
+    guestName: comment.guest_name,
+    content: comment.content,
+    createdAt: new Date(comment.created_at),
+    isApproved: comment.is_approved,
+    isRejected: comment.is_rejected,
+    moderatedAt: comment.moderated_at
+      ? new Date(comment.moderated_at)
+      : undefined,
+    ipAddress: comment.ip_address,
+  }));
+}
+
+export async function approveComment(commentId: string) {
+  if (!supabase) {
+    throw new Error("Supabase not configured");
+  }
+
+  const { data, error } = await supabase.rpc("approve_comment", {
+    comment_id: commentId,
+  });
+
+  if (error) throw error;
+  return { success: data };
+}
+
+export async function rejectComment(commentId: string) {
+  if (!supabase) {
+    throw new Error("Supabase not configured");
+  }
+
+  const { data, error } = await supabase.rpc("reject_comment", {
+    comment_id: commentId,
+  });
+
+  if (error) throw error;
+  return { success: data };
+}
+
+export async function deleteComment(commentId: string) {
+  if (!supabase) {
+    throw new Error("Supabase not configured");
+  }
+
+  const { data, error } = await supabase.rpc("delete_comment", {
+    comment_id: commentId,
+  });
+
+  if (error) throw error;
+  return { success: data };
 }

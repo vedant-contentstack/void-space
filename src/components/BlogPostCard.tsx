@@ -1,7 +1,7 @@
 "use client";
 
 import { BlogPost } from "@/types";
-import { Clock, Eye, Calendar, Tag } from "lucide-react";
+import { Clock, Eye, Calendar, Tag, Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface BlogPostCardProps {
@@ -82,6 +82,17 @@ export default function BlogPostCard({
                   {post.views} souls visited
                 </span>
                 <span className="sm:hidden">{post.views} souls</span>
+              </div>
+            )}
+
+            {post.resonates && post.resonates > 0 && (
+              <div className="flex items-center gap-1 text-red-400">
+                <Heart size={14} className="fill-current" />
+                <span className="hidden sm:inline">
+                  {post.resonates}{" "}
+                  {post.resonates === 1 ? "soul resonates" : "souls resonate"}
+                </span>
+                <span className="sm:hidden">{post.resonates}</span>
               </div>
             )}
           </div>

@@ -42,6 +42,9 @@ const config: Config = {
         "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         glow: "glow 2s ease-in-out infinite alternate",
         float: "float 6s ease-in-out infinite",
+        "spin-slow": "spin 8s linear infinite",
+        "spin-reverse": "spin 6s linear infinite reverse",
+        "fall-into-hole": "fallIntoHole 3s ease-in infinite",
       },
       keyframes: {
         fadeIn: {
@@ -64,9 +67,26 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-4px)" },
         },
+        fallIntoHole: {
+          "0%": {
+            transform: "translateY(-100vh) scale(1)",
+            opacity: "1",
+          },
+          "70%": {
+            transform: "translateY(40vh) scale(0.8)",
+            opacity: "0.8",
+          },
+          "100%": {
+            transform: "translateY(50vh) scale(0)",
+            opacity: "0",
+          },
+        },
       },
       backdropBlur: {
         xs: "2px",
+      },
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
       },
     },
   },
