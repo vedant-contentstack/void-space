@@ -598,3 +598,274 @@ Visit Void Space: ${siteUrl}
 
   return { html, text };
 }
+
+// Comment approval email template
+export function generateCommentApprovalEmail(
+  commenterName: string,
+  postTitle: string,
+  postSlug: string,
+  commentContent: string,
+  baseUrl?: string
+): { html: string; text: string } {
+  const siteUrl = baseUrl || "https://voidd.space";
+  const postUrl = `${siteUrl}/blog/${postSlug}`;
+
+  const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="format-detection" content="telephone=no">
+      <title>Your Comment is Live!</title>
+      <style>
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+          line-height: 1.6;
+          color: #e5e7eb;
+          background-color: #f8fafc;
+          margin: 0;
+          padding: 0;
+          -webkit-text-size-adjust: 100%;
+          -ms-text-size-adjust: 100%;
+        }
+        .email-wrapper {
+          background-color: #f8fafc;
+          padding: 40px 20px;
+          min-height: 100vh;
+        }
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          background-color: #0a0a0a;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .header {
+          text-align: center;
+          padding: 32px 32px 16px;
+          background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        }
+        .logo {
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, #10b981, #34d399);
+          border-radius: 16px;
+          margin: 0 auto 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 24px rgba(16, 185, 129, 0.3);
+        }
+        .logo-icon {
+          width: 18px;
+          height: 18px;
+          background-color: #0a0a0a;
+          border-radius: 50%;
+        }
+        .tagline {
+          color: #10b981;
+          font-size: 15px;
+          margin: 0;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+        .content {
+          padding: 40px 32px;
+          background-color: #0a0a0a;
+        }
+        h1 {
+          color: #ffffff;
+          font-size: 24px;
+          font-weight: 600;
+          margin: 0 0 20px 0;
+          line-height: 1.3;
+          text-align: center;
+        }
+        .greeting {
+          color: #d1d5db;
+          font-size: 16px;
+          margin-bottom: 24px;
+          text-align: center;
+        }
+        .post-info {
+          background: linear-gradient(135deg, #111827, #1f2937);
+          border-radius: 12px;
+          padding: 20px;
+          margin: 24px 0;
+          border-left: 4px solid #10b981;
+        }
+        .post-title {
+          color: #ffffff;
+          font-size: 18px;
+          font-weight: 600;
+          margin: 0 0 8px 0;
+        }
+        .comment-preview {
+          background: #1f2937;
+          border-radius: 8px;
+          padding: 16px;
+          margin: 16px 0;
+          border-left: 3px solid #6b7280;
+        }
+        .comment-text {
+          color: #d1d5db;
+          font-style: italic;
+          margin: 0;
+          line-height: 1.6;
+        }
+        .cta {
+          text-align: center;
+          margin: 32px 0;
+        }
+        .button {
+          display: inline-block;
+          background: linear-gradient(135deg, #10b981, #34d399);
+          color: #ffffff !important;
+          text-decoration: none;
+          padding: 16px 32px;
+          border-radius: 12px;
+          font-weight: 600;
+          font-size: 16px;
+          box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+          transition: all 0.2s ease;
+        }
+        .button:hover {
+          background: linear-gradient(135deg, #34d399, #6ee7b7);
+          box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+          transform: translateY(-1px);
+        }
+        .footer {
+          text-align: center;
+          color: #6b7280;
+          font-size: 14px;
+          padding: 32px;
+          background-color: #111827;
+          border-top: 1px solid #374151;
+        }
+        .footer a {
+          color: #10b981;
+          text-decoration: none;
+        }
+        .footer a:hover {
+          color: #34d399;
+          text-decoration: underline;
+        }
+        
+        /* Mobile responsiveness */
+        @media only screen and (max-width: 600px) {
+          .email-wrapper {
+            padding: 20px 10px;
+          }
+          .container {
+            border-radius: 16px;
+          }
+          .header {
+            padding: 24px 20px 12px;
+          }
+          .content {
+            padding: 32px 24px;
+          }
+          .footer {
+            padding: 24px;
+          }
+          h1 {
+            font-size: 20px;
+          }
+          .logo {
+            width: 50px;
+            height: 50px;
+          }
+          .logo-icon {
+            width: 16px;
+            height: 16px;
+          }
+          .button {
+            padding: 14px 28px;
+            font-size: 15px;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="email-wrapper">
+        <div class="container">
+          <div class="header">
+            <div class="logo">
+              <div class="logo-icon"></div>
+            </div>
+            <p class="tagline">Comment Approved</p>
+          </div>
+
+          <div class="content">
+            <h1>Your comment is now live! 🎉</h1>
+            
+            <div class="greeting">
+              Hi ${commenterName},
+            </div>
+            
+            <p style="color: #d1d5db; margin-bottom: 24px;">
+              Great news! Your thoughtful comment has been approved and is now visible to other readers on void space.
+            </p>
+
+            <div class="post-info">
+              <div class="post-title">${postTitle}</div>
+              <div class="comment-preview">
+                <p class="comment-text">"${
+                  commentContent.length > 150
+                    ? commentContent.substring(0, 150) + "..."
+                    : commentContent
+                }"</p>
+              </div>
+            </div>
+
+            <p style="color: #9ca3af; margin: 24px 0;">
+              Thank you for contributing to our contemplative community. Your voice adds depth to the conversation and helps create meaningful connections in the void space.
+            </p>
+
+            <div class="cta">
+              <a href="${postUrl}" class="button">View Your Comment</a>
+            </div>
+          </div>
+
+          <div class="footer">
+            <p>
+              <a href="${siteUrl}">Visit Void Space</a>
+            </p>
+            <p>© 2025 Void Space. For the People, By the People!</p>
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const text = `
+Your Comment is Live!
+
+Hi ${commenterName},
+
+Great news! Your thoughtful comment has been approved and is now visible to other readers on void space.
+
+Post: ${postTitle}
+Your comment: "${
+    commentContent.length > 150
+      ? commentContent.substring(0, 150) + "..."
+      : commentContent
+  }"
+
+Thank you for contributing to our contemplative community. Your voice adds depth to the conversation and helps create meaningful connections in the void space.
+
+View your comment: ${postUrl}
+
+---
+
+Visit Void Space: ${siteUrl}
+© 2025 Void Space. For the People, By the People!
+  `;
+
+  return { html, text };
+}

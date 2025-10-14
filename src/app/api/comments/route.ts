@@ -4,7 +4,7 @@ import { submitComment } from "@/lib/supabase-service";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { postSlug, guestName, content } = body;
+    const { postSlug, guestName, content, email } = body;
 
     // Validation
     if (!postSlug || typeof postSlug !== "string") {
@@ -72,11 +72,25 @@ export async function POST(request: NextRequest) {
       ? forwarded.split(",")[0]
       : request.headers.get("x-real-ip");
 
+    // Email validation (optional)
+    let trimmedEmail = null;
+    if (email && typeof email === "string") {
+      trimmedEmail = email.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(trimmedEmail)) {
+        return NextResponse.json(
+          { error: "Please enter a valid email address" },
+          { status: 400 }
+        );
+      }
+    }
+
     // Submit comment
     const result = await submitComment(
       postSlug,
       trimmedName,
       trimmedContent,
+      trimmedEmail,
       ip || undefined
     );
 

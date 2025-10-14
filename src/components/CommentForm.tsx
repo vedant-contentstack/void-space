@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { MessageSquare, Send, User } from "lucide-react";
+import { MessageSquare, Send, User, Mail } from "lucide-react";
 
 interface CommentFormProps {
   postSlug: string;
@@ -13,6 +13,7 @@ export default function CommentForm({
   onCommentSubmitted,
 }: CommentFormProps) {
   const [guestName, setGuestName] = useState("");
+  const [email, setEmail] = useState("");
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{
@@ -83,6 +84,7 @@ export default function CommentForm({
           postSlug,
           guestName: trimmedName,
           content: trimmedContent,
+          email: email.trim() || undefined,
         }),
       });
 
@@ -151,6 +153,37 @@ export default function CommentForm({
               disabled={isSubmitting}
             />
           </div>
+        </div>
+
+        {/* Email Input (Optional) */}
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-void-text mb-2"
+          >
+            Email{" "}
+            <span className="text-void-muted text-xs">
+              (optional - for approval notifications)
+            </span>
+          </label>
+          <div className="relative">
+            <Mail
+              size={18}
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-void-muted"
+            />
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="your@email.com"
+              className="w-full pl-10 pr-4 py-3 bg-void-black/50 border border-void-border rounded-lg text-void-text placeholder-void-muted focus:outline-none focus:border-void-accent focus:ring-1 focus:ring-void-accent transition-colors"
+              disabled={isSubmitting}
+            />
+          </div>
+          <p className="text-xs text-void-muted mt-1">
+            We'll only use this to notify you when your comment is approved
+          </p>
         </div>
 
         {/* Comment Textarea */}

@@ -276,6 +276,7 @@ export async function submitComment(
   postSlug: string,
   guestName: string,
   content: string,
+  email?: string,
   ipAddress?: string
 ) {
   if (!supabase) {
@@ -286,6 +287,7 @@ export async function submitComment(
     post_slug: postSlug,
     commenter_name: guestName.trim(),
     comment_content: content.trim(),
+    commenter_email: email || null,
     commenter_ip: ipAddress || null,
   });
 
@@ -372,7 +374,21 @@ export async function approveComment(commentId: string) {
   });
 
   if (error) throw error;
-  return { success: data };
+
+  // The updated function returns comment details for email notification
+  if (data && data.length > 0) {
+    const result = data[0];
+    return {
+      success: result.success,
+      commenterName: result.commenter_name,
+      commenterEmail: result.commenter_email,
+      commentContent: result.comment_content,
+      postTitle: result.post_title,
+      postSlug: result.post_slug,
+    };
+  }
+
+  return { success: false };
 }
 
 export async function rejectComment(commentId: string) {

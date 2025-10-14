@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { approveComment } from "@/lib/supabase-service";
+import { sendEmail, generateCommentApprovalEmail } from "@/lib/email-service";
+import { getBaseUrlFromRequest } from "@/lib/url-utils";
 
 export async function POST(
   request: NextRequest,
@@ -30,6 +32,30 @@ export async function POST(
         { error: "Comment not found or already moderated" },
         { status: 404 }
       );
+    }
+
+    // Send approval email if commenter provided an email
+    if (result.commenterEmail) {
+      try {
+        const baseUrl = getBaseUrlFromRequest(request);
+        const { html, text } = generateCommentApprovalEmail(
+          result.commenterName,
+          result.postTitle,
+          result.postSlug,
+          result.commentContent,
+          baseUrl
+        );
+
+        await sendEmail({
+          to: result.commenterEmail,
+          subject: `Your comment on "${result.postTitle}" is now live!`,
+          html,
+          text,
+        });
+      } catch (emailError) {
+        console.error("Failed to send approval email:", emailError);
+        // Don't fail the approval if email fails
+      }
     }
 
     return NextResponse.json({
